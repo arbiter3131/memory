@@ -5,7 +5,8 @@ import './App.css'
 
 import Card from './Card'
 import GuessCount from './GuessCount'
-import HallOfFame, { FAKE_HOF } from './HallOfFame'
+import HallOfFame from './HallOfFame'
+import HighScoreInput from './HighScoreInput'
 
 const SIDE = 6
 const SYMBOLS = '😀🎉💖🎩🐶🐱🦄🐬🌍🌛🌞💫🍎🍌🍓🍐🍟🍿'
@@ -16,7 +17,13 @@ class App extends Component {
     cards: this.generateCards(),
     currentPair: [],
     guesses: 0,
+    hallOfFame: null,
     matchedCardIndices: [],
+  }
+
+  // Arrow fx for binding
+  displayHallOfFame = hallOfFame => {
+    this.setState({ hallOfFame })
   }
 
   generateCards() {
@@ -33,19 +40,19 @@ class App extends Component {
   getFeedbackForCard(index) {
     const { currentPair, matchedCardIndices } = this.state
     const indexMatched = matchedCardIndices.includes(index)
-  
+
     if (currentPair.length < 2) {
       return indexMatched || index === currentPair[0] ? 'visible' : 'hidden'
     }
-  
+
     if (currentPair.includes(index)) {
       return indexMatched ? 'justMatched' : 'justMismatched'
     }
-  
+
     return indexMatched ? 'visible' : 'hidden'
   }
 
-  // Arrow function for binding this
+  // Arrow fx for binding
   handleCardClick = index => {
     const { currentPair } = this.state
 
@@ -75,8 +82,8 @@ class App extends Component {
   }
 
   render() {
-    const { cards, guesses, matchedCardIndices } = this.state
-    const won = matchedCardIndices === cards.length
+    const { cards, guesses, hallOfFame, matchedCardIndices } = this.state
+    const won = matchedCardIndices.length === cards.length
     return (
       <div className="memory">
         <GuessCount guesses={guesses} />
@@ -84,14 +91,22 @@ class App extends Component {
           <Card
             card={card}
             feedback={this.getFeedbackForCard(index)}
-            key={index}
             index={index}
+            key={index}
             onClick={this.handleCardClick}
           />
         ))}
-        {won && <HallOfFame entries={FAKE_HOF} />}
+        {won &&
+          (hallOfFame ? (
+            <HallOfFame entries={hallOfFame} />
+          ) : (
+            <HighScoreInput
+              guesses={guesses}
+              onStored={this.displayHallOfFame}
+            />
+          ))}
       </div>
-    );
+    )
   }
 }
 
