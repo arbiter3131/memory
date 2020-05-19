@@ -8,7 +8,7 @@ import GuessCount from './GuessCount'
 describe('<App />', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(<App />)
-    console.log(wrapper.getElements())
+    
     expect(wrapper).to.contain(<GuessCount guesses={0} />)
   })
 
